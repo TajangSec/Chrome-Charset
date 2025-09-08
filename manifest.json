@@ -37,13 +37,17 @@
     "activeTab",
     "declarativeNetRequestWithHostAccess",
     "scripting",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "optional_host_permissions": [
     "<all_urls>"
   ],
-  "optional_permissions": [
-    "contextMenus"
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html"],
+      "matches": ["<all_urls>"]
+    }
   ],
   "short_name": "__MSG_appShortName__"
 }

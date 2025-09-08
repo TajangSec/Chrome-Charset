@@ -4,6 +4,21 @@
 import { createMenu, removeMenu } from './menu.js';
 import { setDefaultEncoding, setTabEncoding, recordRecentlySelectedEncoding, getEncoding } from './utils.js';
 
+// 初始化时确保菜单配置存在
+chrome.runtime.onInstalled.addListener(async () => {
+  // 检查是否已有菜单配置
+  const { configMenu } = await chrome.storage.local.get('configMenu');
+  if (configMenu === undefined) {
+    // 默认启用右键菜单
+    await chrome.storage.local.set({ configMenu: true });
+    // 创建右键菜单
+    await createMenu();
+  } else if (configMenu) {
+    // 如果已经配置为启用菜单，确保菜单被创建
+    await createMenu();
+  }
+});
+
 const PriorityDefault = 2;
 
 const getNextRuleId = rules => (rules.reduce((max, rule) => Math.max(max, rule.id), 0) % Number.MAX_SAFE_INTEGER) + 1;
@@ -79,3 +94,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 });
 
 setupDefaultEncoding();
+
+// 在插件启动时检查菜单配置并创建菜单
+(async () => {
+  const { configMenu } = await chrome.storage.local.get('configMenu');
+  if (configMenu) {
+    await createMenu();
+  }
+})();
